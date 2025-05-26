@@ -6,9 +6,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./src:/var/www/html
-      - ./vendor:/var/www/vendor  # Mapeia a pasta vendor
-      - ./public:/var/www/public
+      - .:/var/www  # Mapeia TUDO diretamente para /var/www
     depends_on:
       - db
 
