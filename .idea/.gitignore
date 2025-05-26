@@ -1,0 +1,17 @@
+# PhpStorm/IDEA
+.idea/
+*.iml
+/shelf/
+workspace.xml
+/httpRequests/
+dataSources/
+dataSources.local.xml
+
+# Composer
+/vendor/
+
+# Ambiente
+.env
+
+# Docker
+docker-compose.override.yml
