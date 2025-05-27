@@ -34,14 +34,12 @@ class PostController {
         }
     }
 
-    // get all posts
     public function listAll() {
         $postModel = new Post($this->db);
         $posts = $postModel->getAll();
         echo json_encode(['posts' => $posts]);
     }
 
-    // post by id
     public function getById($id) {
         $postModel = new Post($this->db);
         $post = $postModel->getById($id);
@@ -55,7 +53,6 @@ class PostController {
         echo json_encode(['post' => $post]);
     }
 
-    // Edit post
     public function update($id) {
         $user = $this->auth->verifyToken();
 
@@ -92,7 +89,6 @@ class PostController {
         }
     }
 
-    // Delete post 
     public function delete($id) {
         $user = $this->auth->verifyToken();
 
@@ -120,23 +116,35 @@ class PostController {
     }
 
     public function like($id) {
-    $user = $this->auth->verifyToken();
+        $user = $this->auth->verifyToken();
 
-    $postModel = new Post($this->db);
-    $post = $postModel->getById($id);
+        $postModel = new Post($this->db);
 
-    if (!$post) {
-        http_response_code(404);
-        echo json_encode(['error' => 'Post não encontrado.']);
-        return;
+        // Verifica se o post existe
+        $post = $postModel->getById($id);
+        if (!$post) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Post não encontrado.']);
+            return;
+        }
+
+        // Aqui precisa controlar se o usuário já curtiu ou não
+        if ($postModel->hasUserLiked($id, $user->id)) {
+            // Já curtiu, então descurte
+            $result = $postModel->removeLike($id, $user->id);
+            $action = 'disliked';
+        } else {
+            // Ainda não curtiu, então curte
+            $result = $postModel->addLike($id, $user->id);
+            $action = 'liked';
+        }
+
+        if ($result) {
+            $likes = $postModel->getLikes($id);
+            echo json_encode(['success' => true, 'action' => $action, 'likes' => $likes]);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erro ao atualizar curtida.']);
+        }
     }
-
-    if ($postModel->addLike($id)) {
-        $likes = $postModel->getLikes($id);
-        echo json_encode(['success' => 'Post curtido com sucesso!', 'likes' => $likes]);
-    } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'Erro ao curtir post.']);
-    }
-}
 }
