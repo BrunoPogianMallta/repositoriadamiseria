@@ -118,4 +118,25 @@ class PostController {
             echo json_encode(['error' => 'Erro ao deletar post.']);
         }
     }
+
+    public function like($id) {
+    $user = $this->auth->verifyToken();
+
+    $postModel = new Post($this->db);
+    $post = $postModel->getById($id);
+
+    if (!$post) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Post não encontrado.']);
+        return;
+    }
+
+    if ($postModel->addLike($id)) {
+        $likes = $postModel->getLikes($id);
+        echo json_encode(['success' => 'Post curtido com sucesso!', 'likes' => $likes]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Erro ao curtir post.']);
+    }
+}
 }

@@ -18,6 +18,8 @@ $router->add('GET', '/posts', PostController::class, 'listAll');             // 
 $router->add('GET', '/posts/{id}', PostController::class, 'getById');         // ver post pelo id
 $router->add('PUT', '/posts/{id}', PostController::class, 'update');       // atualizar o  post
 $router->add('DELETE', '/posts/{id}', PostController::class, 'delete');    // deletar 0 post
+$router->add('POST', '/posts/{id}/like', PostController::class, 'like');
+
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
